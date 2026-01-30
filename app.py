@@ -53,19 +53,18 @@ CORS(app, resources={
         "origins": [
             "http://localhost:5173",
             "http://127.0.0.1:5173",
-            "https://unlimitedautomation.netlify.app",
-            "*"               
+            "https://unlimitedautomation.netlify.app"             
         ],
-        "methods": ["GET", "POST", "OPTIONS"],          
-        "allow_headers": ["Content-Type", "Authorization"]
+        "methods": ["POST"],          
+        "allow_headers": ["Content-Type"]
     },
     r"/check-status": {                                
         "origins": ["http://localhost:5173", "https://unlimitedautomation.netlify.app", "*"],
-        "methods": ["GET", "OPTIONS"],
+        "methods": ["GET"],
     },
     r"/flow-callback": {
         "origins": ["*"],                           
-        "methods": ["POST", "OPTIONS"],
+        "methods": ["POST"],
     }
 })
 
@@ -241,4 +240,5 @@ def health():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
