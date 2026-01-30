@@ -42,10 +42,31 @@ PRODUCT_FLOW_MAPPING = {
 # App setup
 # -----------------------------
 app = Flask(__name__)
+#CORS(app, resources={
+#    r"/trigger-flow": {"origins": ["*"], "methods": ["POST"]},
+#    r"/check-status": {"origins": ["*"], "methods": ["GET"]},
+#   r"/flow-callback": {"origins": ["*"], "methods": ["POST"]}
+#})
+
 CORS(app, resources={
-    r"/trigger-flow": {"origins": ["*"], "methods": ["POST"]},
-    r"/check-status": {"origins": ["*"], "methods": ["GET"]},
-    r"/flow-callback": {"origins": ["*"], "methods": ["POST"]}
+    r"/trigger-flow": {
+        "origins": [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "https://unlimitedautomation.netlify.app",
+            "*"               
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],          
+        "allow_headers": ["Content-Type", "Authorization"]
+    },
+    r"/check-status": {                                
+        "origins": ["http://localhost:5173", "https://unlimitedautomation.netlify.app", "*"],
+        "methods": ["GET", "OPTIONS"],
+    },
+    r"/flow-callback": {
+        "origins": ["*"],                           
+        "methods": ["POST", "OPTIONS"],
+    }
 })
 
 # -----------------------------
@@ -220,3 +241,4 @@ def health():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=port, debug=True)
+
