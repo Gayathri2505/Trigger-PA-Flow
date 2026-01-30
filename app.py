@@ -70,26 +70,20 @@ CORS(app, resources={
 })
 """
 
-CORS(app, resources={
-    r"/*": { 
-        "origins": [
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "https://unlimitedautomation.netlify.app",
-            "*"                   
-        ],
-        "methods": ["GET", "POST", "OPTIONS", "HEAD"],   
-        "allow_headers": [
-            "Content-Type",
-            "Authorization",
-            "Accept",
-            "Origin",
-            "X-Requested-With"
-        ],
-        "max_age": 86400,       
-        "supports_credentials": False
+CORS(
+    app,
+    resources={
+        r"/trigger-flow": {
+            "origins": [
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "https://unlimitedautomation.netlify.app"
+            ],
+            "methods": ["POST", "OPTIONS"],
+            "allow_headers": ["Content-Type"]
+        }
     }
-})
+)
 
 # -----------------------------
 # Helpers
@@ -257,21 +251,17 @@ def check_status():
 def health():
     return jsonify({"ok": True, "time": now_iso()}), 200
 
-@app.after_request
-def force_cors_headers(response):
-    origin = request.headers.get("Origin")
-    if origin:
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, HEAD"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
-        response.headers["Access-Control-Max-Age"] = "86400"
-    return response
+@app.route("/trigger-flow", methods=["OPTIONS"])
+def trigger_flow_options():
+    return "", 200
+    
 # -----------------------------
 # Run server
 # -----------------------------
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
