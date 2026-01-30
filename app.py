@@ -72,18 +72,20 @@ CORS(app, resources={
 
 CORS(
     app,
+    supports_credentials=False,
     resources={
-        r"/trigger-flow": {
+        r"/*": {
             "origins": [
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
                 "https://unlimitedautomation.netlify.app"
             ],
-            "methods": ["POST", "OPTIONS"],
-            "allow_headers": ["Content-Type"]
+            "methods": ["GET", "POST", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
         }
     }
 )
+
 
 # -----------------------------
 # Helpers
@@ -261,6 +263,7 @@ def trigger_flow_options():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
