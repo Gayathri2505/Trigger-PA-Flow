@@ -48,6 +48,7 @@ app = Flask(__name__)
 #   r"/flow-callback": {"origins": ["*"], "methods": ["POST"]}
 #})
 
+"""
 CORS(app, resources={
     r"/trigger-flow": {
         "origins": [
@@ -65,6 +66,28 @@ CORS(app, resources={
     r"/flow-callback": {
         "origins": ["*"],                           
         "methods": ["POST"],
+    }
+})
+"""
+
+CORS(app, resources={
+    r"/*": { 
+        "origins": [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "https://unlimitedautomation.netlify.app",
+            "*"                   
+        ],
+        "methods": ["GET", "POST", "OPTIONS", "HEAD"],   
+        "allow_headers": [
+            "Content-Type",
+            "Authorization",
+            "Accept",
+            "Origin",
+            "X-Requested-With"
+        ],
+        "max_age": 86400,       
+        "supports_credentials": False
     }
 })
 
@@ -234,11 +257,21 @@ def check_status():
 def health():
     return jsonify({"ok": True, "time": now_iso()}), 200
 
+@app.after_request
+def force_cors_headers(response):
+    origin = request.headers.get("Origin")
+    if origin:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, HEAD"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        response.headers["Access-Control-Max-Age"] = "86400"
+    return response
 # -----------------------------
 # Run server
 # -----------------------------
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
